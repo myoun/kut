@@ -2,35 +2,38 @@ package app.myoun.kut.controller
 
 import app.myoun.kut.dto.PointDto
 import app.myoun.kut.dto.UserDto
+import app.myoun.kut.dto.UserValidateDto
 import app.myoun.kut.service.UserService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class UserController(val userService: UserService) {
 
-    @GetMapping("/users/user/{id}")
+    @GetMapping("/users/{id}")
     fun getUser(@PathVariable("id") id : String): Any {
-        return userService.getUserInfo(id) ?: mapOf("status" to 404, "message" to "cannot find user")
+        val user = userService.getUserInfo(id) ?: return mapOf("status" to 404, "message" to "cannot find user")
+        return mapOf("status" to 200, "data" to user)
     }
 
     @PostMapping("/users/user")
-    fun postUser(@RequestBody userDto: UserDto): Any {
-        userService.createUser(userDto)
-        return mapOf("status" to 200)
+    fun createUser(@RequestBody userDto: UserDto): Any {
+        val user = userService.createUser(userDto) ?: return mapOf("status" to 409, "message" to "user already exists")
+        return mapOf("status" to 200, "data" to user)
     }
 
-    @PostMapping("/users/user/{id}/point")
+    @PostMapping("/users/{id}/point")
     fun setPoint(@PathVariable("id") id: String, @RequestBody pointDto: PointDto) : Any {
         val isSuccess = userService.updatePoint(id, pointDto.point)
-        return if (isSuccess) mapOf("status" to 200) else mapOf("status" to 404)
+        return if (isSuccess) mapOf("status" to 200) else mapOf("status" to 404, "message" to "cannot find user")
     }
 
-
-
-
+    @PostMapping("/users/validate")
+    fun validateUser(@RequestBody userValidateDto: UserValidateDto): Any {
+        val isValid = userService.validateUser(userValidateDto) ?: return mapOf("status" to 404, "message" to "cannot find user")
+        return mapOf("status" to 200, "data" to isValid)
+    }
 }

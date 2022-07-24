@@ -9,10 +9,9 @@ import javax.persistence.Entity
 import javax.persistence.EntityListeners
 import javax.persistence.Id
 
-
 @Entity
 @EntityListeners(AuditingEntityListener::class)
-class User {
+class Seller {
 
     @Id
     @Column(length = 16)
@@ -25,10 +24,9 @@ class User {
     @Column(length = 64)
     lateinit var password: String
 
-    @Column
-    var point : Int = 0
-
     @CreatedDate
     lateinit var createAt : LocalDateTime
+
+
 
 }
