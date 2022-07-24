@@ -16,3 +16,5 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+springdoc:
+  default-produces-media-type: application/json

@@ -4,14 +4,22 @@ import app.myoun.kut.dto.PointDto
 import app.myoun.kut.dto.UserDto
 import app.myoun.kut.dto.UserValidateDto
 import app.myoun.kut.service.UserService
+import app.myoun.kut.utils.SuccessfulResponse
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
+@Tag(name="User Controller", description = "About Users")
+@ApiResponse(responseCode = "200", content = [Content(schema = Schema(implementation = SuccessfulResponse::class))])
 @RestController
 class UserController(val userService: UserService) {
+
 
     @GetMapping("/users/{id}")
     fun getUser(@PathVariable("id") id : String): Any {
