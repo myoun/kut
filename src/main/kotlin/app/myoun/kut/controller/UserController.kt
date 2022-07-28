@@ -5,6 +5,7 @@ import app.myoun.kut.dto.UserDto
 import app.myoun.kut.dto.UserValidateDto
 import app.myoun.kut.service.UserService
 import app.myoun.kut.utils.SuccessfulResponse
+import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -20,25 +21,28 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class UserController(val userService: UserService) {
 
-
+    @Operation(summary = "유저 조회")
     @GetMapping("/users/{id}")
     fun getUser(@PathVariable("id") id : String): Any {
         val user = userService.getUserInfo(id) ?: return mapOf("status" to 404, "message" to "cannot find user")
         return mapOf("status" to 200, "data" to user)
     }
 
+    @Operation(summary = "유저 생성")
     @PostMapping("/users/user")
     fun createUser(@RequestBody userDto: UserDto): Any {
         val user = userService.createUser(userDto) ?: return mapOf("status" to 409, "message" to "user already exists")
         return mapOf("status" to 200, "data" to user)
     }
 
+    @Operation(summary = "포인트 설정")
     @PostMapping("/users/{id}/point")
     fun setPoint(@PathVariable("id") id: String, @RequestBody pointDto: PointDto) : Any {
         val isSuccess = userService.updatePoint(id, pointDto.point)
         return if (isSuccess) mapOf("status" to 200) else mapOf("status" to 404, "message" to "cannot find user")
     }
 
+    @Operation(summary = "유저 확인")
     @PostMapping("/users/validate")
     fun validateUser(@RequestBody userValidateDto: UserValidateDto): Any {
         val isValid = userService.validateUser(userValidateDto) ?: return mapOf("status" to 404, "message" to "cannot find user")

@@ -1,7 +1,6 @@
 package app.myoun.kut.dao.entity
 
 import org.hibernate.annotations.GenericGenerator
-import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.util.UUID
 import javax.persistence.*
@@ -24,7 +23,5 @@ class Product {
 
     @Column
     lateinit var createdBy: String
-
-
 }
 
