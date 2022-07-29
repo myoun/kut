@@ -5,9 +5,9 @@ import app.myoun.kut.dao.SellerRepository
 import app.myoun.kut.dao.entity.Product
 import app.myoun.kut.dao.entity.Seller
 import app.myoun.kut.dto.ProductDto
-import app.myoun.kut.dto.UserDto
+import app.myoun.kut.dto.AccountDto
+import app.myoun.kut.dto.ValidateDto
 import app.myoun.kut.utils.encryptSHA256
-import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -25,34 +25,38 @@ class SellerService(val sellerRepository: SellerRepository, val productRepositor
     /**
      * @return if return is null, it means seller is already exists.
      */
-    fun createSeller(sellerDto : UserDto): Seller? {
-        if (getSeller(sellerDto.id) != null) return null
+    fun createSeller(accountDto : AccountDto): Seller? {
+        if (getSeller(accountDto.id) != null) return null
 
         val seller = Seller().apply {
-            id = sellerDto.id
-            name = sellerDto.name
-            password = sellerDto.password.encryptSHA256()
+            id = accountDto.id
+            name = accountDto.name
+            password = accountDto.password.encryptSHA256()
         }
 
         return sellerRepository.save(seller)
     }
 
     /**
-     * @param id Seller Id
      * @return product
      */
     fun addProduct(seller: Seller, productDto: ProductDto): Product {
         val product = Product().apply {
             name = productDto.name
             price = productDto.price
-            createdBy = seller.id
         }
 
-        return productRepository.save(product)
+        val realProduct = productRepository.save(product)
+
+        seller.addProduct(product)
+        sellerRepository.save(seller)
+
+        return realProduct
     }
 
-    fun getProducts(seller: Seller): List<Product> {
-        return productRepository.findAllByCreatedBy(Pageable.ofSize(20), seller.id).toList()
+    fun validateSeller(sellerValidateDto: ValidateDto):Boolean? {
+        val user = getSeller(sellerValidateDto.id) ?: return null
+        return user.password == sellerValidateDto.password.encryptSHA256()
     }
 
 

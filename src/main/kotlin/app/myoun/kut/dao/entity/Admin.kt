@@ -7,9 +7,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
 import javax.persistence.*
 
+/**
+ * 어드민
+ */
 @Entity
 @EntityListeners(AuditingEntityListener::class)
-class Seller {
+class Admin {
 
     @Id
     @Column(length = 16)
@@ -26,14 +29,12 @@ class Seller {
     lateinit var createAt : LocalDateTime
 
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "seller")
-    var products: MutableList<Product> = ArrayList()
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "admin")
+    var machines: MutableList<Machine> = ArrayList()
 
-    fun addProduct(product: Product) {
-        products.add(product)
-        product.seller = this
+    fun addMachine(machine: Machine) {
+        machines.add(machine)
+        machine.admin = this
     }
-
-
 
 }
