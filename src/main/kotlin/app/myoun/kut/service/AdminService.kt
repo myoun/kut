@@ -3,7 +3,9 @@ package app.myoun.kut.service
 import app.myoun.kut.dao.AdminRepository
 import app.myoun.kut.dao.MachineRepository
 import app.myoun.kut.dao.entity.Admin
+import app.myoun.kut.dao.entity.Machine
 import app.myoun.kut.dto.AccountDto
+import app.myoun.kut.dto.MachineDto
 import app.myoun.kut.dto.ValidateDto
 import app.myoun.kut.utils.encryptSHA256
 import org.springframework.data.repository.findByIdOrNull
@@ -31,5 +33,19 @@ class AdminService(val adminRepository: AdminRepository, val machineRepository: 
         }
 
         return adminRepository.save(admin)
+    }
+
+    fun addMachine(admin: Admin, machineDto: MachineDto): Machine {
+        val machine = Machine().apply {
+            name = machineDto.name
+            limit = machineDto.limit
+        }
+
+        val realMachine = machineRepository.save(machine)
+
+        admin.addMachine(realMachine)
+
+        adminRepository.save(admin)
+        return machine
     }
 }

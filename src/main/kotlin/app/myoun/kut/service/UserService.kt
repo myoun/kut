@@ -34,10 +34,9 @@ class UserService(val userRepository: UserRepository) {
         return user.password == validateDto.password.encryptSHA256()
     }
 
-    fun updatePoint(id : String, point : Int) : Boolean {
-        val user = userRepository.findByIdOrNull(id) ?: return false
+    fun updatePoint(id : String, point : Int) : User? {
+        val user = userRepository.findByIdOrNull(id) ?: return null
         user.point = point
-        userRepository.save(user)
-        return true
+        return userRepository.save(user)
     }
 }

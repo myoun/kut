@@ -1,10 +1,9 @@
 package app.myoun.kut.dao.entity
 
-import javax.persistence.Column
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
-import javax.persistence.ManyToOne
+import java.time.LocalDateTime
+import javax.persistence.*
 
+@Entity
 class MachineTrash {
 
     @Id
@@ -24,6 +23,10 @@ class MachineTrash {
     var can: Long = 0
 
     @ManyToOne
-    lateinit var admin: Admin
+    @JoinColumn(name = "machine_seq")
+    lateinit var machine: Machine
+
+    @Column
+    lateinit var day: LocalDateTime
 
 }
