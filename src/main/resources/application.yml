@@ -16,5 +16,8 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+  jackson:
+    deserialization:
+      USE_BIG_DECIMAL_FOR_FLOATS : true
 springdoc:
   default-produces-media-type: application/json
