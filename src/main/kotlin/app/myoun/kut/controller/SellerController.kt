@@ -9,8 +9,8 @@ import app.myoun.kut.service.SellerService
 import app.myoun.kut.utils.ValidationResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
 @Tag(name="Seller Controller", description = "About Sellers & Products")
@@ -29,6 +29,12 @@ class SellerController(val sellerService: SellerService) {
     fun getSellerProducts(@PathVariable("id") sellerId: String): ResponseEntity<List<Product>> {
         val seller = sellerService.getSeller(sellerId) ?: return ResponseEntity.notFound().build()
         return ResponseEntity.ok(seller.products)
+    }
+
+    @Operation(summary = "상품 가져오기")
+    @GetMapping("/sellers/products")
+    fun getProducts(pageable: Pageable): List<Product> {
+        return sellerService.getProducts(pageable).content
     }
 
     @Operation(summary = "판매자 생성")
@@ -51,5 +57,4 @@ class SellerController(val sellerService: SellerService) {
         val isValid = sellerService.validateSeller(validateDto) ?: return ResponseEntity.notFound().build()
         return ResponseEntity.ok(ValidationResponse(isValid))
     }
-
 }

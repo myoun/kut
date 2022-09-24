@@ -8,6 +8,8 @@ import app.myoun.kut.dto.ProductDto
 import app.myoun.kut.dto.AccountDto
 import app.myoun.kut.dto.ValidateDto
 import app.myoun.kut.utils.encryptSHA256
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -57,6 +59,10 @@ class SellerService(val sellerRepository: SellerRepository, val productRepositor
     fun validateSeller(sellerValidateDto: ValidateDto):Boolean? {
         val user = getSeller(sellerValidateDto.id) ?: return null
         return user.password == sellerValidateDto.password.encryptSHA256()
+    }
+
+    fun getProducts(pageable: Pageable): Page<Product> {
+        return productRepository.findAll(pageable)
     }
 
 
