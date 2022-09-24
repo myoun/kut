@@ -1,6 +1,7 @@
 package app.myoun.kut.dao.entity
 
 import com.fasterxml.jackson.annotation.JsonBackReference
+import org.hibernate.annotations.Type
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import javax.persistence.*
 
@@ -18,9 +19,15 @@ class Product {
     @Column
     var price: Int = 0
 
+    @Type(type = "text")
+    @Column
+    var thumbnail_url: String? = null
+
+
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "seller_seq")
     var seller: Seller? = null
+
 }
 

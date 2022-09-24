@@ -2,9 +2,7 @@ package app.myoun.kut.controller
 
 import app.myoun.kut.dao.entity.Product
 import app.myoun.kut.dao.entity.Seller
-import app.myoun.kut.dto.AccountDto
-import app.myoun.kut.dto.ProductDto
-import app.myoun.kut.dto.ValidateDto
+import app.myoun.kut.dto.*
 import app.myoun.kut.service.SellerService
 import app.myoun.kut.utils.ValidationResponse
 import io.swagger.v3.oas.annotations.Operation
@@ -14,6 +12,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @Tag(name="Seller Controller", description = "About Sellers & Products")
+@CrossOrigin("*")
 @RestController
 class SellerController(val sellerService: SellerService) {
 
@@ -33,7 +32,7 @@ class SellerController(val sellerService: SellerService) {
 
     @Operation(summary = "상품 가져오기")
     @GetMapping("/sellers/products")
-    fun getProducts(pageable: Pageable): List<Product> {
+    fun getProducts(pageable: Pageable): List<ProductResponse> {
         return sellerService.getProducts(pageable).content
     }
 

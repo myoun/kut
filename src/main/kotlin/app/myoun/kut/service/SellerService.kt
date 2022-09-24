@@ -4,9 +4,7 @@ import app.myoun.kut.dao.ProductRepository
 import app.myoun.kut.dao.SellerRepository
 import app.myoun.kut.dao.entity.Product
 import app.myoun.kut.dao.entity.Seller
-import app.myoun.kut.dto.ProductDto
-import app.myoun.kut.dto.AccountDto
-import app.myoun.kut.dto.ValidateDto
+import app.myoun.kut.dto.*
 import app.myoun.kut.utils.encryptSHA256
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -61,8 +59,10 @@ class SellerService(val sellerRepository: SellerRepository, val productRepositor
         return user.password == sellerValidateDto.password.encryptSHA256()
     }
 
-    fun getProducts(pageable: Pageable): Page<Product> {
-        return productRepository.findAll(pageable)
+    fun getProducts(pageable: Pageable): Page<ProductResponse> {
+        return productRepository.findAll(pageable).map {
+            ProductResponse(it.id!!, it.name, it.price, it.thumbnail_url, AccountInfo(it.seller!!.id, it.seller!!.name))
+        }
     }
 
 
