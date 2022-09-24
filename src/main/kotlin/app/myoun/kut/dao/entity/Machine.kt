@@ -26,6 +26,9 @@ class Machine {
     @Column(name="input_limit",precision = 3, scale = 2)
     var limit: BigDecimal = BigDecimal.valueOf(0.7)
 
+    @Type(type = "big_decimal")
+    @Column(name="volume",precision = 3, scale = 2)
+    var volume = BigDecimal.valueOf(0.0)
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "machine")

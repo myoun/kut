@@ -11,16 +11,7 @@ class MachineTrash {
     var id: Long? = null
 
     @Column
-    var paper: Long = 0
-
-    @Column
-    var plastic: Long = 0
-
-    @Column
-    var battery: Long = 0
-
-    @Column
-    var can: Long = 0
+    var trash: Long = 0
 
     @ManyToOne
     @JoinColumn(name = "machine_seq")
