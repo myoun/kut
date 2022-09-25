@@ -6,6 +6,8 @@ import app.myoun.kut.dao.entity.Product
 import app.myoun.kut.dao.entity.Seller
 import app.myoun.kut.dto.*
 import app.myoun.kut.utils.encryptSHA256
+import app.myoun.kut.utils.getOrNull
+import app.myoun.kut.utils.toProductResponse
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
@@ -37,6 +39,10 @@ class SellerService(val sellerRepository: SellerRepository, val productRepositor
         return sellerRepository.save(seller)
     }
 
+    fun getProductByProductId(productId: Long): Product? {
+        return productRepository.findById(productId).getOrNull()
+    }
+
     /**
      * @return product
      */
@@ -44,6 +50,9 @@ class SellerService(val sellerRepository: SellerRepository, val productRepositor
         val product = Product().apply {
             name = productDto.name
             price = productDto.price
+            description = productDto.description
+            content = productDto.content
+            thumbnail_url = productDto.thumbnail_url
         }
 
         val realProduct = productRepository.save(product)
@@ -60,10 +69,7 @@ class SellerService(val sellerRepository: SellerRepository, val productRepositor
     }
 
     fun getProducts(pageable: Pageable): Page<ProductResponse> {
-        return productRepository.findAll(pageable).map {
-            ProductResponse(it.id!!, it.name, it.price, it.thumbnail_url, AccountInfo(it.seller!!.id, it.seller!!.name))
-        }
+        return productRepository.findAll(pageable).map { it.toProductResponse() }
     }
-
 
 }

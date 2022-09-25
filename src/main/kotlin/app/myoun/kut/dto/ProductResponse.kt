@@ -6,7 +6,9 @@ data class ProductResponse(
     val name: String,
     val price: Int,
     val thumbnail_url: String?,
-    val seller: AccountInfo
+    val seller: AccountInfo,
+    val description: String,
+    val content: String
 )
 
 data class AccountInfo(val id: String, val name: String)
