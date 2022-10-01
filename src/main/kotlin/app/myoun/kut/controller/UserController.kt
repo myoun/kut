@@ -3,8 +3,11 @@ package app.myoun.kut.controller
 import app.myoun.kut.dao.entity.User
 import app.myoun.kut.dto.AccountDto
 import app.myoun.kut.dto.PointDto
+import app.myoun.kut.dto.PurchaseDto
 import app.myoun.kut.dto.ValidateDto
+import app.myoun.kut.service.SellerService
 import app.myoun.kut.service.UserService
+import app.myoun.kut.utils.PurchaseResponse
 import app.myoun.kut.utils.ValidationResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -16,7 +19,7 @@ import kotlin.contracts.contract
 @Tag(name="User Controller", description = "About Users")
 @CrossOrigin(origins = ["*"], allowedHeaders = ["*"])
 @RestController
-class UserController(val userService: UserService) {
+class UserController(val userService: UserService, val sellerService: SellerService) {
 
     @Operation(summary = "유저 조회")
     @GetMapping("/users/{id}")
@@ -35,7 +38,7 @@ class UserController(val userService: UserService) {
     @Operation(summary = "포인트 설정")
     @PostMapping("/users/{id}/point")
     fun setPoint(@PathVariable("id") id: String, @RequestBody pointDto: PointDto) : ResponseEntity<User> {
-        val user = userService.updatePoint(id, pointDto.point) ?: return ResponseEntity.notFound().build()
+        val user = userService.updatePointById(id, pointDto.point) ?: return ResponseEntity.notFound().build()
         return ResponseEntity.ok(user)
     }
 
@@ -44,5 +47,20 @@ class UserController(val userService: UserService) {
     fun validateUser(@RequestBody validateDto: ValidateDto): ResponseEntity<ValidationResponse> {
         val isValid = userService.validateUser(validateDto) ?: return ResponseEntity.status(409).build()
         return ResponseEntity.ok(ValidationResponse(isValid))
+    }
+
+    @Operation(summary = "상품 구매")
+    @PostMapping("/users/purchase")
+    fun purchaseProduct(@RequestBody purchaseDto: PurchaseDto): ResponseEntity<PurchaseResponse> {
+        val user = userService.getUserInfo(purchaseDto.user_id) ?: return ResponseEntity.status(404).build()
+        val product = sellerService.getProductByProductId(purchaseDto.product_id) ?: return ResponseEntity.status(404).build()
+
+        if (user.point < product.price) {
+            return ResponseEntity.status(422).build()
+        }
+
+        val newUser = userService.purchaseProduct(user, product)
+
+        return ResponseEntity.ok(PurchaseResponse(newUser, product))
     }
 }

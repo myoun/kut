@@ -6,7 +6,6 @@ import app.myoun.kut.dao.entity.Product
 import app.myoun.kut.dao.entity.Seller
 import app.myoun.kut.dto.*
 import app.myoun.kut.utils.encryptSHA256
-import app.myoun.kut.utils.getOrNull
 import app.myoun.kut.utils.toProductResponse
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -40,7 +39,7 @@ class SellerService(val sellerRepository: SellerRepository, val productRepositor
     }
 
     fun getProductByProductId(productId: Long): Product? {
-        return productRepository.findById(productId).getOrNull()
+        return productRepository.findByIdOrNull(productId)
     }
 
     /**
@@ -71,5 +70,4 @@ class SellerService(val sellerRepository: SellerRepository, val productRepositor
     fun getProducts(pageable: Pageable): Page<ProductResponse> {
         return productRepository.findAll(pageable).map { it.toProductResponse() }
     }
-
 }
