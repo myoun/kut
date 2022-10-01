@@ -2,18 +2,18 @@ package app.myoun.kut.controller
 
 import app.myoun.kut.dao.entity.Product
 import app.myoun.kut.dao.entity.Seller
-import app.myoun.kut.dto.AccountDto
-import app.myoun.kut.dto.ProductDto
-import app.myoun.kut.dto.ValidateDto
+import app.myoun.kut.dto.*
 import app.myoun.kut.service.SellerService
 import app.myoun.kut.utils.ValidationResponse
+import app.myoun.kut.utils.toProductResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
 @Tag(name="Seller Controller", description = "About Sellers & Products")
+@CrossOrigin("*")
 @RestController
 class SellerController(val sellerService: SellerService) {
 
@@ -24,11 +24,24 @@ class SellerController(val sellerService: SellerService) {
         return ResponseEntity.ok(seller)
     }
 
-    @Operation(summary = "상품 조회")
+    @Operation(summary = "판매자 상품 조회")
     @GetMapping("/sellers/{id}/products")
     fun getSellerProducts(@PathVariable("id") sellerId: String): ResponseEntity<List<Product>> {
         val seller = sellerService.getSeller(sellerId) ?: return ResponseEntity.notFound().build()
         return ResponseEntity.ok(seller.products)
+    }
+
+    @Operation(summary = "상품 조회 (상품 ID)")
+    @GetMapping("/sellers/products/{id}")
+    fun getProductByProductId(@PathVariable("id") productId: Long): ResponseEntity<ProductResponse> {
+        val product = sellerService.getProductByProductId(productId) ?: return ResponseEntity.notFound().build()
+        return ResponseEntity.ok(product.toProductResponse())
+    }
+
+    @Operation(summary = "상품 가져오기")
+    @GetMapping("/sellers/products")
+    fun getProducts(pageable: Pageable): List<ProductResponse> {
+        return sellerService.getProducts(pageable).content
     }
 
     @Operation(summary = "판매자 생성")
@@ -51,5 +64,4 @@ class SellerController(val sellerService: SellerService) {
         val isValid = sellerService.validateSeller(validateDto) ?: return ResponseEntity.notFound().build()
         return ResponseEntity.ok(ValidationResponse(isValid))
     }
-
 }

@@ -9,10 +9,12 @@ import app.myoun.kut.utils.ValidationResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 @Tag(name="User Controller", description = "About Users")
+@CrossOrigin(origins = ["*"], allowedHeaders = ["*"])
 @RestController
 class UserController(val userService: UserService) {
 

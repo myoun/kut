@@ -2,7 +2,6 @@ package app.myoun.kut.dao.entity
 
 import com.fasterxml.jackson.annotation.JsonBackReference
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonManagedReference
 import org.hibernate.annotations.Type
 import java.math.BigDecimal
 import javax.persistence.*
@@ -26,6 +25,9 @@ class Machine {
     @Column(name="input_limit",precision = 3, scale = 2)
     var limit: BigDecimal = BigDecimal.valueOf(0.7)
 
+    @Type(type = "big_decimal")
+    @Column(name="volume",precision = 3, scale = 2)
+    var volume = BigDecimal.valueOf(0.0)
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "machine")

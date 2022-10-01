@@ -58,7 +58,4 @@ class AdminController(val adminService: AdminService) {
         return ResponseEntity.ok(machine)
     }
 
-
-
-
 }
