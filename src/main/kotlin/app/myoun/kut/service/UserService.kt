@@ -1,8 +1,10 @@
 package app.myoun.kut.service
 
 import app.myoun.kut.dao.ProductRepository
+import app.myoun.kut.dao.PurchaseHistoryRepository
 import app.myoun.kut.dao.UserRepository
 import app.myoun.kut.dao.entity.Product
+import app.myoun.kut.dao.entity.PurchaseHistory
 import app.myoun.kut.dao.entity.User
 import app.myoun.kut.dto.AccountDto
 import app.myoun.kut.dto.ValidateDto
@@ -11,7 +13,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
-class UserService(val userRepository: UserRepository, val productRepository: ProductRepository) {
+class UserService(val userRepository: UserRepository, val productRepository: ProductRepository, val purchaseHistoryRepository: PurchaseHistoryRepository) {
 
     fun getUserInfo(id: String) : User? {
         return userRepository.findByIdOrNull(id)
@@ -45,7 +47,12 @@ class UserService(val userRepository: UserRepository, val productRepository: Pro
         return userRepository.save(user.apply { this.point = point })
     }
 
-    fun purchaseProduct(user: User, product: Product): User {
-        return updatePoint(user, user.point - product.price)
+    fun purchaseProduct(user: User, product: Product): PurchaseHistory {
+        val newUser = updatePoint(user, user.point - product.price)
+        val history = PurchaseHistory().apply {
+            this.user = newUser
+            this.product = product
+        }
+        return purchaseHistoryRepository.save(history)
     }
 }

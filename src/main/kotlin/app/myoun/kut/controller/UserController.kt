@@ -1,5 +1,6 @@
 package app.myoun.kut.controller
 
+import app.myoun.kut.dao.entity.PurchaseHistory
 import app.myoun.kut.dao.entity.User
 import app.myoun.kut.dto.AccountDto
 import app.myoun.kut.dto.PointDto
@@ -7,14 +8,11 @@ import app.myoun.kut.dto.PurchaseDto
 import app.myoun.kut.dto.ValidateDto
 import app.myoun.kut.service.SellerService
 import app.myoun.kut.service.UserService
-import app.myoun.kut.utils.PurchaseResponse
 import app.myoun.kut.utils.ValidationResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
 @Tag(name="User Controller", description = "About Users")
 @CrossOrigin(origins = ["*"], allowedHeaders = ["*"])
@@ -51,7 +49,7 @@ class UserController(val userService: UserService, val sellerService: SellerServ
 
     @Operation(summary = "상품 구매")
     @PostMapping("/users/purchase")
-    fun purchaseProduct(@RequestBody purchaseDto: PurchaseDto): ResponseEntity<PurchaseResponse> {
+    fun purchaseProduct(@RequestBody purchaseDto: PurchaseDto): ResponseEntity<PurchaseHistory> {
         val user = userService.getUserInfo(purchaseDto.user_id) ?: return ResponseEntity.status(404).build()
         val product = sellerService.getProductByProductId(purchaseDto.product_id) ?: return ResponseEntity.status(404).build()
 
@@ -59,8 +57,8 @@ class UserController(val userService: UserService, val sellerService: SellerServ
             return ResponseEntity.status(422).build()
         }
 
-        val newUser = userService.purchaseProduct(user, product)
+        val history = userService.purchaseProduct(user, product)
 
-        return ResponseEntity.ok(PurchaseResponse(newUser, product))
+        return ResponseEntity.ok(history)
     }
 }
