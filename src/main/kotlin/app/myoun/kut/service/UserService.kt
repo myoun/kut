@@ -55,4 +55,8 @@ class UserService(val userRepository: UserRepository, val productRepository: Pro
         }
         return purchaseHistoryRepository.save(history)
     }
+
+    fun searchPurchaseHistory(user: User): List<PurchaseHistory> {
+        return purchaseHistoryRepository.findAllByUser(user)
+    }
 }

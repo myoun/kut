@@ -50,8 +50,8 @@ class UserController(val userService: UserService, val sellerService: SellerServ
     @Operation(summary = "상품 구매")
     @PostMapping("/users/purchase")
     fun purchaseProduct(@RequestBody purchaseDto: PurchaseDto): ResponseEntity<PurchaseHistory> {
-        val user = userService.getUserInfo(purchaseDto.user_id) ?: return ResponseEntity.status(404).build()
-        val product = sellerService.getProductByProductId(purchaseDto.product_id) ?: return ResponseEntity.status(404).build()
+        val user = userService.getUserInfo(purchaseDto.user_id) ?: return ResponseEntity.notFound().build()
+        val product = sellerService.getProductByProductId(purchaseDto.product_id) ?: return ResponseEntity.notFound().build()
 
         if (user.point < product.price) {
             return ResponseEntity.status(422).build()
@@ -59,6 +59,14 @@ class UserController(val userService: UserService, val sellerService: SellerServ
 
         val history = userService.purchaseProduct(user, product)
 
+        return ResponseEntity.ok(history)
+    }
+
+    @Operation(summary = "구매 내역 조회")
+    @GetMapping("/users/{id}/history")
+    fun searchPurchaseHistory(@PathVariable("id") id: String): ResponseEntity<List<PurchaseHistory>> {
+        val user = userService.getUserInfo(id) ?: return ResponseEntity.notFound().build()
+        val history = userService.searchPurchaseHistory(user)
         return ResponseEntity.ok(history)
     }
 }
