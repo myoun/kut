@@ -1,8 +1,10 @@
 package app.myoun.kut.service
 
 import app.myoun.kut.dao.ProductRepository
+import app.myoun.kut.dao.PurchaseHistoryRepository
 import app.myoun.kut.dao.SellerRepository
 import app.myoun.kut.dao.entity.Product
+import app.myoun.kut.dao.entity.PurchaseHistory
 import app.myoun.kut.dao.entity.Seller
 import app.myoun.kut.dto.*
 import app.myoun.kut.utils.encryptSHA256
@@ -13,7 +15,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
-class SellerService(val sellerRepository: SellerRepository, val productRepository: ProductRepository) {
+class SellerService(val sellerRepository: SellerRepository, val productRepository: ProductRepository, val purchaseHistoryRepository: PurchaseHistoryRepository) {
 
     /**
      * @param id seller id
@@ -69,5 +71,9 @@ class SellerService(val sellerRepository: SellerRepository, val productRepositor
 
     fun getProducts(pageable: Pageable): Page<ProductResponse> {
         return productRepository.findAll(pageable).map { it.toProductResponse() }
+    }
+
+    fun getProductPurchaseHistory(product: Product): List<PurchaseHistory> {
+        return purchaseHistoryRepository.findAllByProduct(product)
     }
 }

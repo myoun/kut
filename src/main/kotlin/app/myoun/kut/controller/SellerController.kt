@@ -1,6 +1,7 @@
 package app.myoun.kut.controller
 
 import app.myoun.kut.dao.entity.Product
+import app.myoun.kut.dao.entity.PurchaseHistory
 import app.myoun.kut.dao.entity.Seller
 import app.myoun.kut.dto.*
 import app.myoun.kut.service.SellerService
@@ -30,6 +31,26 @@ class SellerController(val sellerService: SellerService) {
         val seller = sellerService.getSeller(sellerId) ?: return ResponseEntity.notFound().build()
         return ResponseEntity.ok(seller.products)
     }
+    @Operation(summary = "상품별 구매 내역 조회")
+    @GetMapping("/sellers/products/{id}/history")
+    fun getProductPurchaseHistory(@PathVariable("id") productId: Long): ResponseEntity<List<PurchaseHistory>> {
+        val product = sellerService.getProductByProductId(productId) ?: return ResponseEntity.notFound().build()
+        val history = sellerService.getProductPurchaseHistory(product)
+        return ResponseEntity.ok(history)
+    }
+
+    @Operation(summary = "판매자별 구매 내역 조회")
+    @GetMapping("/sellers/{id}/products/history")
+    fun getSellerProductPurchaseHistory(@PathVariable("id") sellerId: String): ResponseEntity<Map<Long, List<PurchaseHistory>>> {
+        val seller = sellerService.getSeller(sellerId) ?: return ResponseEntity.notFound().build()
+        val histories = seller.products
+            .map { sellerService.getProductPurchaseHistory(it) }
+            .flatten()
+            .groupBy { it.id!! }
+
+        return ResponseEntity.ok(histories)
+    }
+
 
     @Operation(summary = "상품 조회 (상품 ID)")
     @GetMapping("/sellers/products/{id}")
@@ -64,4 +85,5 @@ class SellerController(val sellerService: SellerService) {
         val isValid = sellerService.validateSeller(validateDto) ?: return ResponseEntity.notFound().build()
         return ResponseEntity.ok(ValidationResponse(isValid))
     }
+
 }
